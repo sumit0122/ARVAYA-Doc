@@ -70,3 +70,71 @@ exports.getSuggestion = async (req, res) => {
         });
     }
 }
+
+exports.getProfile = async (req, res) => {
+
+    let Xtoken = req.body.token;
+
+    try {
+        const token = await this.getSession();
+        const headers = {
+            'Content-Type': 'application/json',
+            'TIMESTAMP': new Date().toISOString(),
+            'REQUEST-ID': this.generateGUID(),
+            'Authorization': `Bearer ${token}`,
+            'x-token': `Bearer ${Xtoken}`
+        };
+        console.log("headers", headers);
+
+        const response = await axios.get('https://abhasbx.abdm.gov.in/abha/api/v3/profile/account', { headers });
+        console.log("response", response);
+        if (response.status == 200) {
+            response.data.code = 200
+            res.status(200).json(response.data);
+        } else {
+            res.status(400).json({
+                "code": 400,
+                "message": response.data.message
+            });
+        }
+    } catch (error) {
+        console.log(error);
+        res.send({
+            "code": 500,
+            "message": "Server not found..."
+        });
+    }
+}
+
+exports.getService = async (req, res) => {
+
+    try {
+        const token = await this.getSession();
+        const headers = {
+            'Content-Type': 'application/json',
+            'TIMESTAMP': new Date().toISOString(),
+            'REQUEST-ID': this.generateGUID(),
+            'Authorization': `Bearer ${token}`,
+            'X-CM-ID': 'sbx'
+        };
+
+        const response = await axios.get('https://dev.abdm.gov.in/api/hiecm/gateway/v3/bridge-service/serviceId/ujjvilas', { headers, validateStatus: (status) => true });
+        console.log("response.data", response);
+
+        if (response.status == 200) {
+            response.data.code = 200
+            res.status(200).json(response.data);
+        } else {
+            res.status(400).json({
+                "code": 400,
+                "message": response.data.message
+            });
+        }
+    } catch (error) {
+        console.log(error);
+        res.send({
+            "code": 500,
+            "message": "Server not found..."
+        });
+    }
+}

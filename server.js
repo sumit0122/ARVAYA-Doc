@@ -24,6 +24,8 @@ app.use(helmet());
 app.disable('x-powered-by');
 
 app.post('/api/getSuggestion', require('./phr').getSuggestion)
+app.post('/api/getProfile', require('./phr').getProfile)
+app.post('/api/getService', require('./phr').getService)
 
 app.listen(port, hostname, () => {
   console.log('ARVAYA is listening on ', hostname, port, '!');
